@@ -47,6 +47,9 @@ class MoviePage extends StatelessWidget {
           height: 300.0,
         ),
         Divider(),
+        _rowWithTwoBottons('Personagens', 'Espécies'),
+        _rowWithTwoBottons('Naves', 'Veículos'),
+        Divider(),
         _textField("Título Original: ", _title),
         _textField("Data de lançamento: ", _releaseDate),
         _textField("Diretor: ", _director),
@@ -65,7 +68,35 @@ class MoviePage extends StatelessWidget {
           style: TextStyle(
             color: Colors.white,
           ),
-          textAlign: TextAlign.left,
+          textAlign: TextAlign.justify,
+        ),
+        Divider(),
+      ],
+    );
+  }
+
+  _rowWithTwoBottons(firstBottomText, secondBottomText) {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: RaisedButton(
+              child: Text(firstBottomText),
+              color: Colors.yellow[600],
+              textColor: Colors.black,
+              onPressed: () {}),
+        ),
+        Container(
+          margin: const EdgeInsets.only(left: 5.0, right: 5.0),
+        ),
+        Expanded(
+          child: RaisedButton(
+              child: Text(secondBottomText),
+              color: Colors.yellow[600],
+              textColor: Colors.black,
+              onPressed: () {}),
+        ),
+        Container(
+          margin: const EdgeInsets.only(left: 5.0, right: 5.0),
         ),
       ],
     );
