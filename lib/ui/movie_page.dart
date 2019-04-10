@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class MoviePage extends StatelessWidget {
   final Map _movieData;
   String _title, _director, _producer, _releaseDate, _sinopse;
+  List _listCharacters, _listStarships, _listPlanets, _listVehicles;
 
   //Construtor
   MoviePage(this._movieData);
@@ -14,6 +15,10 @@ class MoviePage extends StatelessWidget {
     this._producer = _movieData["producer"];
     this._releaseDate = _movieData["release_date"];
     this._sinopse = _movieData["opening_crawl"].replaceAll("\r\n", " ");
+    this._listCharacters = List.from(_movieData["characters"]);
+    this._listStarships = List.from(_movieData["starships"]);
+    this._listPlanets = List.from(_movieData["planets"]);
+    this._listVehicles = List.from(_movieData["vehicles"]);
 
     return Scaffold(
       appBar: AppBar(
@@ -75,6 +80,9 @@ class MoviePage extends StatelessWidget {
     );
   }
 
+  /*
+   * Retorna um Widget Row() contendo 2 botões 
+   */
   _rowWithTwoBottons(firstBottomText, secondBottomText) {
     return Row(
       children: <Widget>[
@@ -106,7 +114,6 @@ class MoviePage extends StatelessWidget {
    * Formata os campos de texto de forma adequada
    */
   _textField(String info, String data) {
-    print("AQUIIIIIIIIIII" + this._sinopse);
     return Row(
       children: <Widget>[
         Text(
