@@ -2,65 +2,80 @@ import 'package:flutter/material.dart';
 
 class MoviePage extends StatelessWidget {
   final Map _movieData;
+  String _title, _director, _producer, _releaseDate, _sinopse;
 
   //Construtor
   MoviePage(this._movieData);
 
   @override
   Widget build(BuildContext context) {
-    final _title = _movieData["title"];
-    final _director = _movieData["director"];
-    final _producer = _movieData["producer"];
-    final _releaseDate = _movieData["release_date"];
-    var tmpSinopse = _movieData["opening_crawl"];
-    final _sinopse = tmpSinopse.replaceAll("\r\n", " ");
+    this._title = _movieData["title"];
+    this._director = _movieData["director"];
+    this._producer = _movieData["producer"];
+    this._releaseDate = _movieData["release_date"];
+    this._sinopse = _movieData["opening_crawl"].replaceAll("\r\n", " ");
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Star Wars: " + _movieData["title"]),
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
-      body: Center(
-        child: Padding(
-          padding: EdgeInsets.only(left: 20.0, right: 20.0),
-          child: Column(
-            children: <Widget>[
-              Image(
-                image: AssetImage("lib/assets/" + _movieData["title"] + ".jpg"),
-                width: 200.0,
-                height: 300.0,
-              ),
-              Divider(),
-              _textField("Título Original: ", _title),
-              _textField("Data de lançamento: ", _releaseDate),
-              _textField("Diretor: ", _director),
-              _textField("Produtores: ", _producer),
-              Divider(),
-              Text(
-                "Sinópse: ",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                ),
-                textAlign: TextAlign.left,
-              ),
-              Flexible(
-                child: Text(
-                  _sinopse,
-                  style: TextStyle(
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.left,
-                ),
-              ),
-            ],
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.all(10.0),
+              child: SingleChildScrollView(child: _getDetailedList()),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
+  /*
+   * Builda os itens da lista de detalhes do filme: 
+   * img, data de lançamento, diretor, produtor e sinopse
+   */
+  _getDetailedList() {
+    return Column(
+      children: <Widget>[
+        Image(
+          image: AssetImage("lib/assets/" + _movieData["title"] + ".jpg"),
+          width: 200.0,
+          height: 300.0,
+        ),
+        Divider(),
+        _textField("Título Original: ", _title),
+        _textField("Data de lançamento: ", _releaseDate),
+        _textField("Diretor: ", _director),
+        _textField("Produtores: ", _producer),
+        Divider(),
+        Text(
+          "Sinopse: ",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+          textAlign: TextAlign.start,
+        ),
+        Text(
+          _sinopse,
+          style: TextStyle(
+            color: Colors.white,
+          ),
+          textAlign: TextAlign.left,
+        ),
+      ],
+    );
+  }
+
+  /*
+   * Formata os campos de texto de forma adequada
+   */
   _textField(String info, String data) {
+    print("AQUIIIIIIIIIII" + this._sinopse);
     return Row(
       children: <Widget>[
         Text(

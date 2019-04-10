@@ -19,7 +19,6 @@ class _HomePageState extends State<HomePage> {
     else {
       response =
           await http.get("https://swapi.co/api/films/?search=" + _search);
-      print(response);
     }
     return json.decode(response.body);
   }
