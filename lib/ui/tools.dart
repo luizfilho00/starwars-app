@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
  */
 class Tools {
   static Widget myTextField(String info,
-      {String data = '', color = Colors.white}) {
+      {String data = '',
+      color = Colors.white,
+      TextAlign alignment = TextAlign.left}) {
     return Padding(
       padding: EdgeInsets.all(3.0),
       child: Row(

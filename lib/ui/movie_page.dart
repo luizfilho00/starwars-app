@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:star_wars/ui/character_page.dart';
+import 'package:star_wars/ui/species_page.dart';
 import 'package:star_wars/ui/tools.dart';
 
 class MoviePage extends StatefulWidget {
@@ -13,7 +14,11 @@ class MoviePage extends StatefulWidget {
 
 class _MoviePageState extends State<MoviePage> {
   String _title, _director, _producer, _releaseDate, _sinopse;
-  List _listCharacters, _listStarships, _listPlanets, _listVehicles;
+  List _listCharacters,
+      _listStarships,
+      _listPlanets,
+      _listVehicles,
+      _listSpecies;
 
   @override
   void initState() {
@@ -23,6 +28,7 @@ class _MoviePageState extends State<MoviePage> {
     this._producer = widget._movieData["producer"];
     this._releaseDate = widget._movieData["release_date"];
     this._sinopse = widget._movieData["opening_crawl"].replaceAll("\r\n", " ");
+    this._listSpecies = List.from(widget._movieData["species"]);
     this._listCharacters = List.from(widget._movieData["characters"]);
     this._listStarships = List.from(widget._movieData["starships"]);
     this._listPlanets = List.from(widget._movieData["planets"]);
@@ -52,8 +58,21 @@ class _MoviePageState extends State<MoviePage> {
             height: 300.0,
           ),
           Divider(),
-          Tools.rowWithTwoBottons(context, 'Personagens', 'Espécies',
-              _callCharacters, _callSpecies),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: RaisedButton(
+                    child: Text('Personagens'),
+                    color: Colors.yellow[600],
+                    textColor: Colors.black,
+                    onPressed: () {
+                      _callCharacters(context);
+                    }),
+              ),
+            ],
+          ),
+          Tools.rowWithTwoBottons(
+              context, 'Planetas', 'Espécies', _callPlanets, _callSpecies),
           Tools.rowWithTwoBottons(
               context, 'Naves', 'Veículos', _callShips, _callVehicles),
           Divider(),
@@ -93,9 +112,14 @@ class _MoviePageState extends State<MoviePage> {
             builder: (context) => CharacterPage(_listCharacters)));
   }
 
-  void _callSpecies(context) {}
+  void _callSpecies(context) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => SpeciesPage(_listSpecies)));
+  }
 
   void _callVehicles(context) {}
 
   void _callShips(context) {}
+
+  void _callPlanets(context) {}
 }
