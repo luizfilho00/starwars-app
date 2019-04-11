@@ -31,60 +31,62 @@ class _MoviePageState extends State<MoviePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Star Wars: " + widget._movieData["title"]),
+        appBar: AppBar(
+          title: Text("Star Wars: " + widget._movieData["title"]),
+          backgroundColor: Colors.black,
+        ),
         backgroundColor: Colors.black,
-      ),
-      backgroundColor: Colors.black,
-      body: Column(
+        body: SingleChildScrollView(child: _getDetailedList(context)));
+  }
+
+  _getDetailedList(context) {
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: Column(
         children: <Widget>[
-          SingleChildScrollView(child: _getDetailedList(context)),
+          Image(
+            image:
+                AssetImage("lib/assets/" + widget._movieData["title"] + ".jpg"),
+            width: 200.0,
+            height: 300.0,
+          ),
+          Divider(),
+          _rowWithTwoBottons(context, 'Personagens', 'Espécies',
+              _callCharacters, _callSpecies),
+          _rowWithTwoBottons(
+              context, 'Naves', 'Veículos', _callShips, _callVehicles),
+          Divider(),
+          _textField("Título Original: ", _title),
+          _textField("Data de lançamento: ", _releaseDate),
+          _textField("Diretor: ", _director),
+          _textField("Produtores: ", _producer),
+          Divider(),
+          Text(
+            "Sinopse: ",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.start,
+          ),
+          Text(
+            _sinopse,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.justify,
+          ),
         ],
       ),
     );
   }
 
-  _getDetailedList(context) {
-    return Column(
-      children: <Widget>[
-        Image(
-          image:
-              AssetImage("lib/assets/" + widget._movieData["title"] + ".jpg"),
-          width: 200.0,
-          height: 300.0,
-        ),
-        Divider(),
-        _rowWithTwoBottons(
-            context, 'Personagens', 'Espécies', _callCharacters, _callSpecies),
-        _rowWithTwoBottons(
-            context, 'Naves', 'Veículos', _callShips, _callVehicles),
-        Divider(),
-        _textField("Título Original: ", _title),
-        _textField("Data de lançamento: ", _releaseDate),
-        _textField("Diretor: ", _director),
-        _textField("Produtores: ", _producer),
-        Divider(),
-        Text(
-          "Sinopse: ",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.start,
-        ),
-        Text(
-          _sinopse,
-          style: TextStyle(
-            color: Colors.white,
-          ),
-          textAlign: TextAlign.justify,
-        ),
-        Divider(),
-      ],
-    );
+  void _callCharacters(context) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => CharacterPage(_title, _listCharacters)));
   }
-
-  void _callCharacters(context) {}
 
   void _callSpecies(context) {}
 
@@ -102,10 +104,7 @@ class _MoviePageState extends State<MoviePage> {
               color: Colors.yellow[600],
               textColor: Colors.black,
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => CharacterPage(_listCharacters)));
+                _firstBottomFunc(context);
               }),
         ),
         Container(
@@ -117,9 +116,6 @@ class _MoviePageState extends State<MoviePage> {
               color: Colors.yellow[600],
               textColor: Colors.black,
               onPressed: () {}),
-        ),
-        Container(
-          margin: const EdgeInsets.only(left: 5.0, right: 5.0),
         ),
       ],
     );

@@ -5,21 +5,28 @@ import 'package:http/http.dart' as http;
 
 class CharacterPage extends StatelessWidget {
   final List _charsUrlList;
+  final String _movieTitle;
   List chars = List();
 
   /* Construtor recebe List com characters do Filme */
-  CharacterPage(this._charsUrlList);
+  CharacterPage(this._movieTitle, this._charsUrlList);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Lista de Personagens'),
+        title: Text('Personagens'),
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
       body: Column(
         children: <Widget>[
+          Image(
+            image: AssetImage("lib/assets/storm_trooper.png"),
+            width: 140.0,
+            height: 140.0,
+          ),
+          Divider(),
           Expanded(
             child: FutureBuilder(
               future: _populateCharactersMap(),
@@ -27,7 +34,8 @@ class CharacterPage extends StatelessWidget {
                 switch (snapshot.connectionState) {
                   case ConnectionState.waiting:
                   case ConnectionState.none:
-                    return Container(
+                    return Center(
+                      child: Container(
                         width: 300.0,
                         height: 300.0,
                         alignment: Alignment.center,
@@ -35,7 +43,9 @@ class CharacterPage extends StatelessWidget {
                           valueColor: AlwaysStoppedAnimation<Color>(
                               Colors.yellowAccent),
                           strokeWidth: 5.0,
-                        ));
+                        ),
+                      ),
+                    );
                   default:
                     if (snapshot.hasError)
                       return Container();
@@ -98,32 +108,34 @@ class CharacterPage extends StatelessWidget {
   }
 
   _createCharsTable(context) {
-    return GridView.builder(
-        padding: EdgeInsets.all(5.0),
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 5.0,
-          mainAxisSpacing: 5.0,
-        ),
-        itemCount: _charsUrlList.length,
-        itemBuilder: (context, index) {
-          var height = (double.parse(chars[index]['height']) / 100);
-          return GestureDetector(
-              child: Column(
-                children: <Widget>[
-                  _textField(chars[index]['name'], color: Colors.yellowAccent),
-                  _textField("Altura: ", data: height.toString() + 'm'),
-                  _textField("Peso: ", data: chars[index]['mass']),
-                  _textField("Cor de pele: ", data: chars[index]['skin_color']),
-                  _textField("Cor do cabelo: ",
-                      data: chars[index]['hair_color']),
-                  _textField("Ano de aniversário: ",
-                      data: chars[index]['birth_year']),
-                  _textField("Gênero: ", data: chars[index]['gender']),
-                  //_textField("Planeta Natal: ", _producer), ## FAZER REQUEST EM PLANETA ##
-                ],
-              ),
-              onTap: () {});
-        });
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: GridView.builder(
+          padding: EdgeInsets.all(4.0),
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 5.0,
+            mainAxisSpacing: 5.0,
+          ),
+          itemCount: _charsUrlList.length,
+          itemBuilder: (context, index) {
+            print('ALTURA: ' + chars[index]['height']);
+            var height = chars[index]['height'];
+            if (height != 'unknown') height = (double.parse(height) / 100);
+            return Column(
+              children: <Widget>[
+                _textField(chars[index]['name'], color: Colors.yellowAccent),
+                _textField("Altura: ", data: height.toString() + 'm'),
+                _textField("Peso: ", data: chars[index]['mass']),
+                _textField("Cor de pele: ", data: chars[index]['skin_color']),
+                _textField("Cor do cabelo: ", data: chars[index]['hair_color']),
+                _textField("Ano de aniversário: ",
+                    data: chars[index]['birth_year']),
+                _textField("Gênero: ", data: chars[index]['gender']),
+                //_textField("Planeta Natal: ", _producer), ## FAZER REQUEST EM PLANETA ##
+              ],
+            );
+          }),
+    );
   }
 }
