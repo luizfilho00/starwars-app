@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:star_wars/ui/movie_page.dart';
+import 'package:star_wars/ui/tools.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,7 +14,7 @@ class _HomePageState extends State<HomePage> {
   String _search;
   Map _mapResponse;
 
-  Future<Map> _getMovies() async {
+  _getMovies() async {
     http.Response response;
     if (_search == null)
       response = await http.get("https://swapi.co/api/films/");
@@ -50,9 +51,9 @@ class _HomePageState extends State<HomePage> {
             child: TextField(
               decoration: InputDecoration(
                   labelText: "Pesquisar filme:",
-                  labelStyle: TextStyle(color: Colors.yellow),
+                  labelStyle: TextStyle(color: Colors.yellowAccent),
                   border: OutlineInputBorder()),
-              style: TextStyle(color: Colors.yellow, fontSize: 18.0),
+              style: TextStyle(color: Colors.yellowAccent, fontSize: 18.0),
               textAlign: TextAlign.center,
               onChanged: (text) {
                 setState(() {
@@ -62,58 +63,38 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Expanded(
-            child: FutureBuilder(
-                future: _getMovies(),
-                builder: (context, snapshot) {
-                  switch (snapshot.connectionState) {
-                    case ConnectionState.waiting:
-                    case ConnectionState.none:
-                      return Container(
-                          width: 300.0,
-                          height: 300.0,
-                          alignment: Alignment.center,
-                          child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.yellowAccent),
-                            strokeWidth: 5.0,
-                          ));
-                    default:
-                      if (snapshot.hasError)
-                        return Container();
-                      else
-                        return _createMovieTable(context, snapshot);
-                  }
-                }),
+            child: Tools.loadingThenRun(
+                context, _getMovies(), 'loading_vader.gif', _createMovieTable),
           ),
         ],
       ),
     );
   }
-}
 
-_createMovieTable(BuildContext context, AsyncSnapshot snapshot) {
-  var count = snapshot.data["count"];
-  return GridView.builder(
-      padding: EdgeInsets.all(5.0),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 5.0,
-        mainAxisSpacing: 5.0,
-      ),
-      itemCount: count,
-      itemBuilder: (context, index) {
-        var imgPath =
-            "lib/assets/" + snapshot.data["results"][index]["title"] + ".jpg";
-        return GestureDetector(
-            child: Image(
-              image: AssetImage(imgPath),
-            ),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          MoviePage(snapshot.data["results"][index])));
-            });
-      });
+  _createMovieTable(BuildContext context, AsyncSnapshot snapshot) {
+    var count = snapshot.data["count"];
+    return GridView.builder(
+        padding: EdgeInsets.all(5.0),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 5.0,
+          mainAxisSpacing: 5.0,
+        ),
+        itemCount: count,
+        itemBuilder: (context, index) {
+          var imgPath =
+              "lib/assets/" + snapshot.data["results"][index]["title"] + ".jpg";
+          return GestureDetector(
+              child: Image(
+                image: AssetImage(imgPath),
+              ),
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            MoviePage(snapshot.data["results"][index])));
+              });
+        });
+  }
 }

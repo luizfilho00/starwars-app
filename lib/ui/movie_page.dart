@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:star_wars/ui/character_page.dart';
+import 'package:star_wars/ui/tools.dart';
 
 class MoviePage extends StatefulWidget {
   final Map _movieData;
@@ -51,15 +52,15 @@ class _MoviePageState extends State<MoviePage> {
             height: 300.0,
           ),
           Divider(),
-          _rowWithTwoBottons(context, 'Personagens', 'Espécies',
+          Tools.rowWithTwoBottons(context, 'Personagens', 'Espécies',
               _callCharacters, _callSpecies),
-          _rowWithTwoBottons(
+          Tools.rowWithTwoBottons(
               context, 'Naves', 'Veículos', _callShips, _callVehicles),
           Divider(),
-          _textField("Título Original: ", _title),
-          _textField("Data de lançamento: ", _releaseDate),
-          _textField("Diretor: ", _director),
-          _textField("Produtores: ", _producer),
+          Tools.myTextField("Título Original: ", data: _title),
+          Tools.myTextField("Data de lançamento: ", data: _releaseDate),
+          Tools.myTextField("Diretor: ", data: _director),
+          Tools.myTextField("Produtores: ", data: _producer),
           Divider(),
           Text(
             "Sinopse: ",
@@ -81,11 +82,15 @@ class _MoviePageState extends State<MoviePage> {
     );
   }
 
+  /*
+  * As funções abaixo são responsáveis por chamar a view de cada tela
+  */
+
   void _callCharacters(context) {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => CharacterPage(_title, _listCharacters)));
+            builder: (context) => CharacterPage(_listCharacters)));
   }
 
   void _callSpecies(context) {}
@@ -93,57 +98,4 @@ class _MoviePageState extends State<MoviePage> {
   void _callVehicles(context) {}
 
   void _callShips(context) {}
-
-  _rowWithTwoBottons(context, firstBottomText, secondBottomText,
-      _firstBottomFunc, _secondBottomFunc) {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          child: RaisedButton(
-              child: Text(firstBottomText),
-              color: Colors.yellow[600],
-              textColor: Colors.black,
-              onPressed: () {
-                _firstBottomFunc(context);
-              }),
-        ),
-        Container(
-          margin: const EdgeInsets.only(left: 5.0, right: 5.0),
-        ),
-        Expanded(
-          child: RaisedButton(
-              child: Text(secondBottomText),
-              color: Colors.yellow[600],
-              textColor: Colors.black,
-              onPressed: () {}),
-        ),
-      ],
-    );
-  }
-
-  _textField(String info, String data) {
-    return Padding(
-      padding: EdgeInsets.all(3.0),
-      child: Row(
-        children: <Widget>[
-          Text(
-            info,
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.left,
-          ),
-          Text(
-            data,
-            style: TextStyle(
-              color: Colors.white,
-            ),
-            textAlign: TextAlign.left,
-            overflow: TextOverflow.clip,
-          ),
-        ],
-      ),
-    );
-  }
 }
