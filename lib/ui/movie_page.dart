@@ -1,59 +1,63 @@
 import 'package:flutter/material.dart';
+import 'package:star_wars/ui/character_page.dart';
 
-class MoviePage extends StatelessWidget {
+class MoviePage extends StatefulWidget {
   final Map _movieData;
-  String _title, _director, _producer, _releaseDate, _sinopse;
-  List _listCharacters, _listStarships, _listPlanets, _listVehicles;
 
-  //Construtor
   MoviePage(this._movieData);
 
   @override
-  Widget build(BuildContext context) {
-    this._title = _movieData["title"];
-    this._director = _movieData["director"];
-    this._producer = _movieData["producer"];
-    this._releaseDate = _movieData["release_date"];
-    this._sinopse = _movieData["opening_crawl"].replaceAll("\r\n", " ");
-    this._listCharacters = List.from(_movieData["characters"]);
-    this._listStarships = List.from(_movieData["starships"]);
-    this._listPlanets = List.from(_movieData["planets"]);
-    this._listVehicles = List.from(_movieData["vehicles"]);
+  _MoviePageState createState() => _MoviePageState();
+}
 
+class _MoviePageState extends State<MoviePage> {
+  String _title, _director, _producer, _releaseDate, _sinopse;
+  List _listCharacters, _listStarships, _listPlanets, _listVehicles;
+
+  @override
+  void initState() {
+    super.initState();
+    this._title = widget._movieData["title"];
+    this._director = widget._movieData["director"];
+    this._producer = widget._movieData["producer"];
+    this._releaseDate = widget._movieData["release_date"];
+    this._sinopse = widget._movieData["opening_crawl"].replaceAll("\r\n", " ");
+    this._listCharacters = List.from(widget._movieData["characters"]);
+    this._listStarships = List.from(widget._movieData["starships"]);
+    this._listPlanets = List.from(widget._movieData["planets"]);
+    this._listVehicles = List.from(widget._movieData["vehicles"]);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Star Wars: " + _movieData["title"]),
+        title: Text("Star Wars: " + widget._movieData["title"]),
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
       body: Column(
         children: <Widget>[
-          Expanded(
-            child: Padding(
-              padding: EdgeInsets.all(10.0),
-              child: SingleChildScrollView(child: _getDetailedList()),
-            ),
-          ),
+          SingleChildScrollView(child: _getDetailedList(context)),
         ],
       ),
     );
   }
 
-  /*
-   * Builda os itens da lista de detalhes do filme: 
-   * img, data de lançamento, diretor, produtor e sinopse
-   */
-  _getDetailedList() {
+  _getDetailedList(context) {
     return Column(
       children: <Widget>[
         Image(
-          image: AssetImage("lib/assets/" + _movieData["title"] + ".jpg"),
+          image:
+              AssetImage("lib/assets/" + widget._movieData["title"] + ".jpg"),
           width: 200.0,
           height: 300.0,
         ),
         Divider(),
-        _rowWithTwoBottons('Personagens', 'Espécies'),
-        _rowWithTwoBottons('Naves', 'Veículos'),
+        _rowWithTwoBottons(
+            context, 'Personagens', 'Espécies', _callCharacters, _callSpecies),
+        _rowWithTwoBottons(
+            context, 'Naves', 'Veículos', _callShips, _callVehicles),
         Divider(),
         _textField("Título Original: ", _title),
         _textField("Data de lançamento: ", _releaseDate),
@@ -80,10 +84,16 @@ class MoviePage extends StatelessWidget {
     );
   }
 
-  /*
-   * Retorna um Widget Row() contendo 2 botões 
-   */
-  _rowWithTwoBottons(firstBottomText, secondBottomText) {
+  void _callCharacters(context) {}
+
+  void _callSpecies(context) {}
+
+  void _callVehicles(context) {}
+
+  void _callShips(context) {}
+
+  _rowWithTwoBottons(context, firstBottomText, secondBottomText,
+      _firstBottomFunc, _secondBottomFunc) {
     return Row(
       children: <Widget>[
         Expanded(
@@ -91,7 +101,12 @@ class MoviePage extends StatelessWidget {
               child: Text(firstBottomText),
               color: Colors.yellow[600],
               textColor: Colors.black,
-              onPressed: () {}),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => CharacterPage(_listCharacters)));
+              }),
         ),
         Container(
           margin: const EdgeInsets.only(left: 5.0, right: 5.0),
@@ -110,28 +125,29 @@ class MoviePage extends StatelessWidget {
     );
   }
 
-  /*
-   * Formata os campos de texto de forma adequada
-   */
   _textField(String info, String data) {
-    return Row(
-      children: <Widget>[
-        Text(
-          info,
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
+    return Padding(
+      padding: EdgeInsets.all(3.0),
+      child: Row(
+        children: <Widget>[
+          Text(
+            info,
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.left,
           ),
-          textAlign: TextAlign.left,
-        ),
-        Text(
-          data,
-          style: TextStyle(
-            color: Colors.white,
+          Text(
+            data,
+            style: TextStyle(
+              color: Colors.white,
+            ),
+            textAlign: TextAlign.left,
+            overflow: TextOverflow.clip,
           ),
-          textAlign: TextAlign.left,
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

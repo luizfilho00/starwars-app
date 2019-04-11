@@ -11,6 +11,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _search;
+  Map _mapResponse;
 
   Future<Map> _getMovies() async {
     http.Response response;
@@ -26,7 +27,11 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    _getMovies().then((map) {});
+
+    if (_mapResponse == null)
+      _getMovies().then((map) {
+        _mapResponse = map;
+      });
   }
 
   @override
@@ -41,20 +46,21 @@ class _HomePageState extends State<HomePage> {
       body: Column(
         children: <Widget>[
           Padding(
-              padding: EdgeInsets.all(10.0),
-              child: TextField(
-                decoration: InputDecoration(
-                    labelText: "Pesquisar filme:",
-                    labelStyle: TextStyle(color: Colors.yellow),
-                    border: OutlineInputBorder()),
-                style: TextStyle(color: Colors.yellow, fontSize: 18.0),
-                textAlign: TextAlign.center,
-                onChanged: (text) {
-                  setState(() {
-                    _search = text;
-                  });
-                },
-              )),
+            padding: EdgeInsets.all(10.0),
+            child: TextField(
+              decoration: InputDecoration(
+                  labelText: "Pesquisar filme:",
+                  labelStyle: TextStyle(color: Colors.yellow),
+                  border: OutlineInputBorder()),
+              style: TextStyle(color: Colors.yellow, fontSize: 18.0),
+              textAlign: TextAlign.center,
+              onChanged: (text) {
+                setState(() {
+                  _search = text;
+                });
+              },
+            ),
+          ),
           Expanded(
             child: FutureBuilder(
                 future: _getMovies(),
