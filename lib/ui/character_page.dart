@@ -15,27 +15,64 @@ class CharacterPage extends StatefulWidget {
 
 class _CharacterPageState extends State<CharacterPage> {
   List chars = List();
+  bool _loaded;
+
+  @override
+  void initState() {
+    super.initState();
+    _populateCharactersMap().then((loaded) {
+      if (mounted)
+        setState(() {
+          _loaded = loaded;
+        });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Personagens'),
+    //Enquanto faz as requisições http exibe 'Carregando...'
+    if (_loaded == null || chars.length < widget._charsUrlList.length) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Personagens'),
+          backgroundColor: Colors.black,
+        ),
         backgroundColor: Colors.black,
-      ),
-      backgroundColor: Colors.black,
-      body: Column(
-        children: <Widget>[
-          Expanded(
-              child: Tools.loadingThenRun(
-            context,
-            _populateCharactersMap(),
-            'loading_storm.gif',
-            _createCharsTable,
-          )),
-        ],
-      ),
-    );
+        body: Center(
+          child: Container(
+            width: 140.0,
+            height: 140.0,
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child:
+                      Image(image: AssetImage('lib/assets/loading_storm.gif')),
+                ),
+                Text(
+                  'Carregando...',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+    //Lista de personagens está carregada
+    else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Personagens'),
+          backgroundColor: Colors.black,
+        ),
+        backgroundColor: Colors.black,
+        body: Column(
+          children: <Widget>[
+            Expanded(child: _createCharsTable(context)),
+          ],
+        ),
+      );
+    }
   }
 
   /*
@@ -53,10 +90,12 @@ class _CharacterPageState extends State<CharacterPage> {
   Future<bool> _populateCharactersMap() async {
     var url;
     for (url in widget._charsUrlList) {
-      var charInfo = await _getCharacterInfo(url);
-      if (charInfo != null) {
-        chars.add(charInfo);
-      }
+      _getCharacterInfo(url).then((map) {
+        if (mounted)
+          setState(() {
+            chars.add(map);
+          });
+      });
     }
     return true;
   }
@@ -64,37 +103,63 @@ class _CharacterPageState extends State<CharacterPage> {
   /*
   * Cria grid responsável por exibir detalhes sobre os personagens
   */
-  _createCharsTable(context, snap) {
+  _createCharsTable(context) {
     return Padding(
       padding: EdgeInsets.all(10.0),
-      child: GridView.builder(
+      child: ListView.builder(
           padding: EdgeInsets.all(4.0),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            crossAxisSpacing: 5.0,
-            mainAxisSpacing: 5.0,
-          ),
           itemCount: widget._charsUrlList.length,
           itemBuilder: (context, index) {
             var height = chars[index]['height'];
             if (height != 'unknown') height = (double.parse(height) / 100);
             return Column(
               children: <Widget>[
-                Tools.myTextField(chars[index]['name'],
-                    color: Colors.yellowAccent),
-                Tools.myTextField("Altura: ", data: height.toString() + 'm'),
-                Tools.myTextField("Peso: ", data: chars[index]['mass']),
-                Tools.myTextField("Cor de pele: ",
-                    data: chars[index]['skin_color']),
-                Tools.myTextField("Cor do cabelo: ",
+                myTextField(chars[index]['name'],
+                    color: Colors.yellowAccent, fontSize: 18.0),
+                myTextField("Altura: ", data: height.toString() + 'm'),
+                myTextField("Peso: ", data: chars[index]['mass']),
+                myTextField("Cor de pele: ", data: chars[index]['skin_color']),
+                myTextField("Cor do cabelo: ",
                     data: chars[index]['hair_color']),
-                Tools.myTextField("Ano de aniversário: ",
+                myTextField("Ano de aniversário: ",
                     data: chars[index]['birth_year']),
-                Tools.myTextField("Gênero: ", data: chars[index]['gender']),
-                //Tools.myTextField("Planeta Natal: ", _producer), ## FAZER REQUEST EM PLANETA ##
+                myTextField("Gênero: ", data: chars[index]['gender']),
+                Divider(),
               ],
             );
           }),
+    );
+  }
+
+  myTextField(String info,
+      {String data = '',
+      color = Colors.white,
+      TextAlign alignment = TextAlign.left,
+      double fontSize = 17.0}) {
+    return Padding(
+      padding: EdgeInsets.all(3.0),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Text(
+              info,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: fontSize,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              data,
+              style: TextStyle(color: color, fontSize: fontSize),
+              textAlign: TextAlign.left,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

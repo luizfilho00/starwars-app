@@ -12,21 +12,23 @@ class Tools {
       padding: EdgeInsets.all(3.0),
       child: Row(
         children: <Widget>[
-          Text(
-            info,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
+          Expanded(
+            child: Text(
+              info,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+              textAlign: TextAlign.left,
             ),
-            textAlign: TextAlign.left,
           ),
-          Text(
-            data,
-            style: TextStyle(
-              color: color,
+          Expanded(
+            child: Text(
+              data,
+              style: TextStyle(color: color, fontSize: 16.0),
+              textAlign: TextAlign.left,
             ),
-            textAlign: TextAlign.left,
-            overflow: TextOverflow.clip,
           ),
         ],
       ),
@@ -38,7 +40,14 @@ class Tools {
       children: <Widget>[
         Expanded(
           child: RaisedButton(
-              child: Text(txt1),
+              child: Text(
+                txt1,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                  color: Colors.black,
+                ),
+              ),
               color: Colors.yellow[600],
               textColor: Colors.black,
               onPressed: () {
@@ -50,7 +59,14 @@ class Tools {
         ),
         Expanded(
           child: RaisedButton(
-              child: Text(txt2),
+              child: Text(
+                txt2,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                  color: Colors.black,
+                ),
+              ),
               color: Colors.yellow[600],
               textColor: Colors.black,
               onPressed: () {

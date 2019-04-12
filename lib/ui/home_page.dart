@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   String _search;
-  Map _mapResponse;
+  Map _mapMovies;
 
   _getMovies() async {
     http.Response response;
@@ -29,50 +29,107 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
 
-    if (_mapResponse == null)
+    if (_mapMovies == null) {
       _getMovies().then((map) {
-        _mapResponse = map;
+        if (mounted) {
+          setState(() {
+            _mapMovies = map;
+          });
+        }
       });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_mapMovies == null) {
+      return _scaffoldLoading(context);
+    } else {
+      return _scaffoldLoaded(context);
+    }
+  }
+
+  _scaffoldLoading(context) {
     return Scaffold(
-      appBar: AppBar(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title: Image.asset('lib/assets/logo.png'),
+          centerTitle: true,
+        ),
         backgroundColor: Colors.black,
-        title: Image.asset('lib/assets/logo.png'),
-        centerTitle: true,
-      ),
-      backgroundColor: Colors.black,
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(10.0),
-            child: TextField(
-              decoration: InputDecoration(
-                  labelText: "Pesquisar filme:",
-                  labelStyle: TextStyle(color: Colors.yellowAccent),
-                  border: OutlineInputBorder()),
-              style: TextStyle(color: Colors.yellowAccent, fontSize: 18.0),
-              textAlign: TextAlign.center,
-              onChanged: (text) {
-                setState(() {
-                  _search = text;
-                });
-              },
-            ),
-          ),
-          Expanded(
-            child: Tools.loadingThenRun(
-                context, _getMovies(), 'loading_vader.gif', _createMovieTable),
-          ),
-        ],
+        body: _loadingView(context));
+  }
+
+  _scaffoldLoaded(context) {
+    return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.black,
+          title: Image.asset('lib/assets/logo.png'),
+          centerTitle: true,
+        ),
+        backgroundColor: Colors.black,
+        body: _loadedView(context));
+  }
+
+  _searchBar() {
+    return Padding(
+      padding: EdgeInsets.all(10.0),
+      child: TextField(
+        decoration: InputDecoration(
+            labelText: "Pesquisar filme:",
+            labelStyle: TextStyle(color: Colors.yellowAccent),
+            border: OutlineInputBorder()),
+        style: TextStyle(color: Colors.yellowAccent, fontSize: 18.0),
+        textAlign: TextAlign.center,
+        onChanged: (text) {
+          setState(() {
+            _search = text;
+          });
+        },
       ),
     );
   }
 
-  _createMovieTable(BuildContext context, AsyncSnapshot snapshot) {
-    var count = snapshot.data["count"];
+  _loading() {
+    return Center(
+      child: Container(
+        width: 140.0,
+        height: 140.0,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Image(image: AssetImage('lib/assets/loading_storm.gif')),
+            ),
+            Text(
+              'Carregando...',
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _loadingView(context) {
+    return Column(
+      children: <Widget>[
+        _searchBar(),
+        Expanded(child: _loading()),
+      ],
+    );
+  }
+
+  _loadedView(context) {
+    return Column(
+      children: <Widget>[
+        _searchBar(),
+        Expanded(child: _createMoviesTable(context)),
+      ],
+    );
+  }
+
+  _createMoviesTable(BuildContext context) {
+    var count = _mapMovies["count"];
     return GridView.builder(
         padding: EdgeInsets.all(5.0),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -83,7 +140,7 @@ class _HomePageState extends State<HomePage> {
         itemCount: count,
         itemBuilder: (context, index) {
           var imgPath =
-              "lib/assets/" + snapshot.data["results"][index]["title"] + ".jpg";
+              "lib/assets/" + _mapMovies["results"][index]["title"] + ".jpg";
           return GestureDetector(
               child: Image(
                 image: AssetImage(imgPath),
@@ -93,7 +150,7 @@ class _HomePageState extends State<HomePage> {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            MoviePage(snapshot.data["results"][index])));
+                            MoviePage(_mapMovies["results"][index])));
               });
         });
   }

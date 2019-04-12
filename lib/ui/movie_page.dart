@@ -62,9 +62,15 @@ class _MoviePageState extends State<MoviePage> {
             children: <Widget>[
               Expanded(
                 child: RaisedButton(
-                    child: Text('Personagens'),
+                    child: Text(
+                      'Personagens',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16.0,
+                        color: Colors.black,
+                      ),
+                    ),
                     color: Colors.yellow[600],
-                    textColor: Colors.black,
                     onPressed: () {
                       _callCharacters(context);
                     }),
@@ -86,14 +92,13 @@ class _MoviePageState extends State<MoviePage> {
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
+              fontSize: 16.0,
             ),
             textAlign: TextAlign.start,
           ),
           Text(
             _sinopse,
-            style: TextStyle(
-              color: Colors.white,
-            ),
+            style: TextStyle(color: Colors.white, fontSize: 16.0),
             textAlign: TextAlign.justify,
           ),
         ],

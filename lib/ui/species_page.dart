@@ -14,28 +14,63 @@ class SpeciesPage extends StatefulWidget {
 }
 
 class _SpeciesPageState extends State<SpeciesPage> {
-  List speciesList = List();
+  List _speciesList = List();
+  bool _loaded;
+
+  @override
+  void initState() {
+    super.initState();
+    _populateSpeciesMap().then((loaded) {
+      if (mounted)
+        setState(() {
+          _loaded = loaded;
+        });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Espécies'),
+    if (_loaded == null ||
+        _speciesList.length < widget._speciesUrlList.length) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Espécies'),
+          backgroundColor: Colors.black,
+        ),
         backgroundColor: Colors.black,
-      ),
-      backgroundColor: Colors.black,
-      body: Column(
-        children: <Widget>[
-          Expanded(
-              child: Tools.loadingThenRun(
-            context,
-            _populateSpeciesMap(),
-            'loading_storm.gif',
-            _createSpeciesTable,
-          )),
-        ],
-      ),
-    );
+        body: Center(
+          child: Container(
+            width: 140.0,
+            height: 140.0,
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  child:
+                      Image(image: AssetImage('lib/assets/loading_storm.gif')),
+                ),
+                Text(
+                  'Carregando...',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text('Espécies'),
+          backgroundColor: Colors.black,
+        ),
+        backgroundColor: Colors.black,
+        body: Column(
+          children: <Widget>[
+            Expanded(child: _createSpeciesTable(context)),
+          ],
+        ),
+      );
+    }
   }
 
   /*
@@ -53,11 +88,12 @@ class _SpeciesPageState extends State<SpeciesPage> {
   Future<bool> _populateSpeciesMap() async {
     var url;
     for (url in widget._speciesUrlList) {
-      var speciesInfo = await _getSpeciesInfo(url);
-      if (speciesInfo != null) {
-        speciesList.add(speciesInfo);
-        print(speciesInfo);
-      }
+      _getSpeciesInfo(url).then((map) {
+        if (mounted)
+          setState(() {
+            _speciesList.add(map);
+          });
+      });
     }
     return true;
   }
@@ -65,39 +101,76 @@ class _SpeciesPageState extends State<SpeciesPage> {
   /*
   * Cria grid responsável por exibir detalhes sobre os personagens
   */
-  _createSpeciesTable(context, snap) {
+  _createSpeciesTable(context) {
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: ListView.builder(
           padding: EdgeInsets.all(4.0),
           itemCount: widget._speciesUrlList.length,
           itemBuilder: (context, index) {
+            var height = _speciesList[index]['average_height'];
+            if (height != 'n/a' && height != 'unknown') {
+              height =
+                  double.parse(_speciesList[index]['average_height']) / 100;
+              height = height.toString() + 'm';
+            }
+
             return Column(
               children: <Widget>[
-                Tools.myTextField(speciesList[index]['name'],
-                    color: Colors.yellowAccent),
-                Tools.myTextField("Classificação: ",
-                    data: speciesList[index]['classification']),
-                Tools.myTextField("Designação: ",
-                    data: speciesList[index]['designation']),
-                Tools.myTextField("Altura média: ",
-                    data: speciesList[index]['average_height']),
-                Tools.myTextField("Cores de pele: ",
-                    data: speciesList[index]['skin_colors']),
-                Tools.myTextField("Cores de cabelo: ",
-                    data: speciesList[index]['hair_colors']),
-                Tools.myTextField("Cores dos olhos: ",
-                    data: speciesList[index]['eye_colors']),
-                Tools.myTextField("Expectativa de vida: ",
-                    data: speciesList[index]['average_lifespan']),
-                Tools.myTextField("Língua: ",
-                    data: speciesList[index]['language']),
+                myTextField(_speciesList[index]['name'],
+                    color: Colors.yellowAccent, fontSize: 18.0),
+                myTextField("Classificação: ",
+                    data: _speciesList[index]['classification']),
+                myTextField("Designação: ",
+                    data: _speciesList[index]['designation']),
+                myTextField("Altura média: ", data: height),
+                myTextField("Cores de pele: ",
+                    data: _speciesList[index]['skin_colors']),
+                myTextField("Cores de cabelo: ",
+                    data: _speciesList[index]['hair_colors']),
+                myTextField("Cores dos olhos: ",
+                    data: _speciesList[index]['eye_colors']),
+                myTextField("Expectativa de vida: ",
+                    data: _speciesList[index]['average_lifespan'] + ' years'),
+                myTextField("Língua: ", data: _speciesList[index]['language']),
                 Divider(),
-                // Tools.myTextField("Planeta Natal: ",
-                //     data: speciesList[index]['gender']), ## FAZER REQUEST EM PLANETA ##
+                // myTextField("Planeta Natal: ",
+                //     data: _speciesList[index]['gender']), ## FAZER REQUEST EM PLANETA ##
               ],
             );
           }),
+    );
+  }
+
+  myTextField(String info,
+      {String data = '',
+      color = Colors.white,
+      TextAlign alignment = TextAlign.left,
+      double fontSize = 17.0}) {
+    return Padding(
+      padding: EdgeInsets.all(3.0),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: Text(
+              info,
+              style: TextStyle(
+                color: color,
+                fontWeight: FontWeight.bold,
+                fontSize: fontSize,
+              ),
+              textAlign: TextAlign.left,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              data,
+              style: TextStyle(color: color, fontSize: fontSize),
+              textAlign: TextAlign.left,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
