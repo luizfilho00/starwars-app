@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:star_wars/ui/character_page.dart';
-import 'package:star_wars/ui/species_page.dart';
-import 'package:star_wars/ui/tools.dart';
+import 'package:star_wars/view/characters.dart';
+import 'package:star_wars/view/planets.dart';
+import 'package:star_wars/view/ships.dart';
+import 'package:star_wars/view/species.dart';
+import 'package:star_wars/helpers/page_elements.dart';
+import 'package:star_wars/view/vehicles.dart';
 
 class MoviePage extends StatefulWidget {
   final Map _movieData;
@@ -14,11 +17,7 @@ class MoviePage extends StatefulWidget {
 
 class _MoviePageState extends State<MoviePage> {
   String _title, _director, _producer, _releaseDate, _sinopse;
-  List _listCharacters,
-      _listStarships,
-      _listPlanets,
-      _listVehicles,
-      _listSpecies;
+  List _listCharacters, _listShips, _listPlanets, _listVehicles, _listSpecies;
 
   @override
   void initState() {
@@ -30,7 +29,7 @@ class _MoviePageState extends State<MoviePage> {
     this._sinopse = widget._movieData["opening_crawl"].replaceAll("\r\n", " ");
     this._listSpecies = List.from(widget._movieData["species"]);
     this._listCharacters = List.from(widget._movieData["characters"]);
-    this._listStarships = List.from(widget._movieData["starships"]);
+    this._listShips = List.from(widget._movieData["starships"]);
     this._listPlanets = List.from(widget._movieData["planets"]);
     this._listVehicles = List.from(widget._movieData["vehicles"]);
   }
@@ -77,15 +76,16 @@ class _MoviePageState extends State<MoviePage> {
               ),
             ],
           ),
-          Tools.rowWithTwoBottons(
+          PageElements.rowWithTwoBottons(
               context, 'Planetas', 'Espécies', _callPlanets, _callSpecies),
-          Tools.rowWithTwoBottons(
+          PageElements.rowWithTwoBottons(
               context, 'Naves', 'Veículos', _callShips, _callVehicles),
           Divider(),
-          Tools.myTextField("Título Original: ", data: _title),
-          Tools.myTextField("Data de lançamento: ", data: _releaseDate),
-          Tools.myTextField("Diretor: ", data: _director),
-          Tools.myTextField("Produtores: ", data: _producer),
+          PageElements.rowWithTwoTexts("Título Original: ", data: _title),
+          PageElements.rowWithTwoTexts("Data de lançamento: ",
+              data: _releaseDate),
+          PageElements.rowWithTwoTexts("Diretor: ", data: _director),
+          PageElements.rowWithTwoTexts("Produtores: ", data: _producer),
           Divider(),
           Text(
             "Sinopse: ",
@@ -111,20 +111,27 @@ class _MoviePageState extends State<MoviePage> {
   */
 
   void _callCharacters(context) {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => CharacterPage(_listCharacters)));
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => Characters(_listCharacters)));
   }
 
   void _callSpecies(context) {
     Navigator.push(context,
-        MaterialPageRoute(builder: (context) => SpeciesPage(_listSpecies)));
+        MaterialPageRoute(builder: (context) => Species(_listSpecies)));
   }
 
-  void _callVehicles(context) {}
+  void _callVehicles(context) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => Vehicles(_listVehicles)));
+  }
 
-  void _callShips(context) {}
+  void _callShips(context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => Ships(_listShips)));
+  }
 
-  void _callPlanets(context) {}
+  void _callPlanets(context) {
+    Navigator.push(context,
+        MaterialPageRoute(builder: (context) => Planets(_listPlanets)));
+  }
 }

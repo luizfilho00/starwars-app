@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 /*
  * Classe contendo Widgets personalizados que são utilizados repetidas vezes no código
  */
-class Tools {
-  static Widget myTextField(String info,
+class PageElements {
+  static Widget rowWithTwoTexts(String info,
       {String data = '',
       color = Colors.white,
-      TextAlign alignment = TextAlign.left}) {
+      TextAlign alignment = TextAlign.left,
+      double fontSize = 17.0}) {
     return Padding(
       padding: EdgeInsets.all(3.0),
       child: Row(
@@ -18,7 +19,7 @@ class Tools {
               style: TextStyle(
                 color: color,
                 fontWeight: FontWeight.bold,
-                fontSize: 16.0,
+                fontSize: fontSize,
               ),
               textAlign: TextAlign.left,
             ),
@@ -26,7 +27,7 @@ class Tools {
           Expanded(
             child: Text(
               data,
-              style: TextStyle(color: color, fontSize: 16.0),
+              style: TextStyle(color: color, fontSize: fontSize),
               textAlign: TextAlign.left,
             ),
           ),
@@ -77,37 +78,49 @@ class Tools {
     );
   }
 
-  static loadingThenRun(context, ft, imgLoading, callback) {
-    return FutureBuilder(
-        future: ft,
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            case ConnectionState.waiting:
-            case ConnectionState.none:
-              return Center(
-                child: Container(
-                  width: 140.0,
-                  height: 140.0,
-                  child: Column(
-                    children: <Widget>[
-                      Expanded(
-                        child: Image(
-                            image: AssetImage('lib/assets/' + imgLoading)),
-                      ),
-                      Text(
-                        'Carregando...',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            default:
-              if (snapshot.hasError)
-                return Container();
-              else
-                return callback(context, snapshot);
-          }
-        });
+  static loading() {
+    return Center(
+      child: Container(
+        width: 140.0,
+        height: 140.0,
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: Image(image: AssetImage('lib/assets/loading_storm.gif')),
+            ),
+            Text(
+              'Carregando...',
+              style: TextStyle(color: Colors.white),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  static scaffoldLoading(title) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        backgroundColor: Colors.black,
+      ),
+      backgroundColor: Colors.black,
+      body: Center(child: loading()),
+    );
+  }
+
+  static scaffoldLoaded(context, title, createTableFunction) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(title),
+        backgroundColor: Colors.black,
+      ),
+      backgroundColor: Colors.black,
+      body: Column(
+        children: <Widget>[
+          Expanded(child: createTableFunction(context)),
+        ],
+      ),
+    );
   }
 }

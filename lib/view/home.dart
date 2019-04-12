@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:star_wars/ui/movie_page.dart';
-import 'package:star_wars/ui/tools.dart';
+import 'package:star_wars/view/movies.dart';
+import 'package:star_wars/helpers/page_elements.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -90,31 +90,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _loading() {
-    return Center(
-      child: Container(
-        width: 140.0,
-        height: 140.0,
-        child: Column(
-          children: <Widget>[
-            Expanded(
-              child: Image(image: AssetImage('lib/assets/loading_storm.gif')),
-            ),
-            Text(
-              'Carregando...',
-              style: TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   _loadingView(context) {
     return Column(
       children: <Widget>[
         _searchBar(),
-        Expanded(child: _loading()),
+        Expanded(child: PageElements.loading()),
       ],
     );
   }
