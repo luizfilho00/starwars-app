@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:star_wars/model/logic.dart';
 
 /*
  * Classe contendo Widgets personalizados que são utilizados repetidas vezes no código
@@ -121,6 +122,38 @@ class PageElements {
           Expanded(child: createTableFunction(context)),
         ],
       ),
+    );
+  }
+
+  static String dateFormat(String text) {
+    var date = text.split('-');
+    return date[2] + '/' + date[1] + '/' + date[0];
+  }
+
+  static translatedText(text) {
+    return FutureBuilder(
+      future: Logic.textToPtBr(text),
+      builder: (context, snapshot) {
+        switch (snapshot.connectionState) {
+          case ConnectionState.none:
+          case ConnectionState.waiting:
+            return Container(
+                width: 100.0,
+                height: 100.0,
+                child: Center(
+                    child: CircularProgressIndicator(
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                  strokeWidth: 4.0,
+                )));
+          default:
+            if (snapshot.hasError) return Container();
+            return Text(
+              snapshot.data,
+              style: TextStyle(color: Colors.white, fontSize: 16.0),
+              textAlign: TextAlign.justify,
+            );
+        }
+      },
     );
   }
 }

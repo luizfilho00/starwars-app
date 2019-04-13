@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:star_wars/model/logic.dart';
 import 'package:star_wars/view/characters.dart';
 import 'package:star_wars/view/planets.dart';
 import 'package:star_wars/view/ships.dart';
@@ -45,6 +46,8 @@ class _MoviePageState extends State<MoviePage> {
         body: SingleChildScrollView(child: _getDetailedList(context)));
   }
 
+  ///Cria lista com as informações sobre o filme
+  ///Botões, título original, data de lançamento, diretor, produtor, sinopse e tradução da sinopse
   _getDetailedList(context) {
     return Padding(
       padding: EdgeInsets.all(10.0),
@@ -57,25 +60,7 @@ class _MoviePageState extends State<MoviePage> {
             height: 300.0,
           ),
           Divider(),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: RaisedButton(
-                    child: Text(
-                      'Personagens',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0,
-                        color: Colors.black,
-                      ),
-                    ),
-                    color: Colors.yellow[600],
-                    onPressed: () {
-                      _callCharacters(context);
-                    }),
-              ),
-            ],
-          ),
+          _characterButton(),
           PageElements.rowWithTwoBottons(
               context, 'Planetas', 'Espécies', _callPlanets, _callSpecies),
           PageElements.rowWithTwoBottons(
@@ -83,12 +68,14 @@ class _MoviePageState extends State<MoviePage> {
           Divider(),
           PageElements.rowWithTwoTexts("Título Original: ", data: _title),
           PageElements.rowWithTwoTexts("Data de lançamento: ",
-              data: _releaseDate),
+              data: PageElements.dateFormat(_releaseDate)),
           PageElements.rowWithTwoTexts("Diretor: ", data: _director),
           PageElements.rowWithTwoTexts("Produtores: ", data: _producer),
           Divider(),
+          _sinopseWidget(),
+          Divider(),
           Text(
-            "Sinopse: ",
+            "Tradução: ",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -96,13 +83,54 @@ class _MoviePageState extends State<MoviePage> {
             ),
             textAlign: TextAlign.start,
           ),
-          Text(
-            _sinopse,
-            style: TextStyle(color: Colors.white, fontSize: 16.0),
-            textAlign: TextAlign.justify,
-          ),
+          Divider(),
+          PageElements.translatedText(_sinopse), // Sinopse traduzida
         ],
       ),
+    );
+  }
+
+  _characterButton() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          child: RaisedButton(
+              child: Text(
+                'Personagens',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                  color: Colors.black,
+                ),
+              ),
+              color: Colors.yellow[600],
+              onPressed: () {
+                _callCharacters(context);
+              }),
+        ),
+      ],
+    );
+  }
+
+  /// Widget contendo a sinopse original
+  _sinopseWidget() {
+    return Column(
+      children: <Widget>[
+        Text(
+          "Sinopse: ",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 16.0,
+          ),
+          textAlign: TextAlign.start,
+        ),
+        Text(
+          _sinopse,
+          style: TextStyle(color: Colors.white, fontSize: 16.0),
+          textAlign: TextAlign.justify,
+        ),
+      ],
     );
   }
 
