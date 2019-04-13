@@ -12,12 +12,14 @@ class Characters extends StatefulWidget {
 }
 
 class _CharactersState extends State<Characters> {
-  List _charsList = List();
+  List _charsList;
   bool _loaded;
 
   @override
   void initState() {
     super.initState();
+
+    _charsList = List();
     _populateCharactersMap().then((loaded) {
       if (mounted)
         setState(() {

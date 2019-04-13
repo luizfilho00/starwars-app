@@ -12,12 +12,14 @@ class Species extends StatefulWidget {
 }
 
 class _SpeciesState extends State<Species> {
-  List _speciesList = List();
+  List _speciesList;
   bool _loaded;
 
   @override
   void initState() {
     super.initState();
+
+    _speciesList = List();
     _populateSpeciesMap().then((loaded) {
       if (mounted)
         setState(() {
@@ -33,7 +35,7 @@ class _SpeciesState extends State<Species> {
         _speciesList.length < widget._speciesUrlList.length) {
       return PageElements.scaffoldLoading('Espécies');
     }
-    //Lista de personagens está carregada
+    //Lista está carregada
     else {
       return PageElements.scaffoldLoaded(
           context, 'Espécies', _createSpeciesTable);
@@ -41,7 +43,7 @@ class _SpeciesState extends State<Species> {
   }
 
   /*
-  * Após retornar Futures contendo as informações de cada personagem, add na lista de chars
+  * Após retornar Futures contendo as informações de cada espécie, add na lista de espécies
   */
   Future<bool> _populateSpeciesMap() async {
     var url;
@@ -57,7 +59,7 @@ class _SpeciesState extends State<Species> {
   }
 
   /*
-  * Cria grid responsável por exibir detalhes sobre os personagens
+  * Cria grid responsável por exibir detalhes sobre as espécies
   */
   _createSpeciesTable(context) {
     return Padding(

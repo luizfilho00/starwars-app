@@ -12,12 +12,14 @@ class Planets extends StatefulWidget {
 }
 
 class _PlanetsState extends State<Planets> {
-  List _planetsList = List();
+  List _planetsList;
   bool _loaded;
 
   @override
   void initState() {
     super.initState();
+
+    _planetsList = List();
     _populateplanetsMap().then((loaded) {
       if (mounted)
         setState(() {
@@ -33,7 +35,7 @@ class _PlanetsState extends State<Planets> {
         _planetsList.length < widget._planetsUrlList.length) {
       return PageElements.scaffoldLoading('Planetas');
     }
-    //Lista de personagens está carregada
+    //Lista está carregada
     else {
       return PageElements.scaffoldLoaded(
           context, 'Planetas', _createPlanetsTable);
@@ -41,7 +43,7 @@ class _PlanetsState extends State<Planets> {
   }
 
   /*
-  * Após retornar Futures contendo as informações de cada personagem, add na lista de chars
+  * Após retornar Futures contendo as informações de cada planeta, add na lista de planetas
   */
   Future<bool> _populateplanetsMap() async {
     var url;
@@ -57,7 +59,7 @@ class _PlanetsState extends State<Planets> {
   }
 
   /*
-  * Cria grid responsável por exibir detalhes sobre os personagens
+  * Cria grid responsável por exibir detalhes sobre os planetas
   */
   _createPlanetsTable(context) {
     return Padding(

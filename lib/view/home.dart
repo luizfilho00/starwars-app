@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:star_wars/model/logic.dart';
 import 'package:star_wars/view/movies.dart';
 import 'package:star_wars/helpers/page_elements.dart';
 
@@ -13,24 +14,15 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   String _search;
   Map _mapMovies;
-
-  _getMovies() async {
-    http.Response response;
-    if (_search == null)
-      response = await http.get("https://swapi.co/api/films/");
-    else {
-      response =
-          await http.get("https://swapi.co/api/films/?search=" + _search);
-    }
-    return json.decode(response.body);
-  }
+  final String _urlMovies = 'https://swapi.co/api/films/';
+  final String _urlSearch = 'https://swapi.co/api/films/?search=';
 
   @override
   void initState() {
     super.initState();
 
     if (_mapMovies == null) {
-      _getMovies().then((map) {
+      Logic.getData(_urlMovies).then((map) {
         if (mounted) {
           setState(() {
             _mapMovies = map;
@@ -84,6 +76,11 @@ class _HomePageState extends State<HomePage> {
         onChanged: (text) {
           setState(() {
             _search = text;
+          });
+          Logic.getData(_urlSearch + _search).then((map) {
+            setState(() {
+              _mapMovies = map;
+            });
           });
         },
       ),
