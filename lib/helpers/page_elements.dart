@@ -79,7 +79,7 @@ class PageElements {
     );
   }
 
-  static loading() {
+  static loading({String txt = 'Carregando...'}) {
     return Center(
       child: Container(
         width: 140.0,
@@ -90,7 +90,7 @@ class PageElements {
               child: Image(image: AssetImage('lib/assets/loading_storm.gif')),
             ),
             Text(
-              'Carregando...',
+              txt,
               style: TextStyle(color: Colors.white),
             ),
           ],
@@ -121,6 +121,20 @@ class PageElements {
         children: <Widget>[
           Expanded(child: createTableFunction(context)),
         ],
+      ),
+    );
+  }
+
+  static notFoundWidget(txt) {
+    return Center(
+      child: Container(
+        width: 300.0,
+        height: 200.0,
+        child: Text(
+          txt,
+          style: TextStyle(color: Colors.white, fontSize: 17.0),
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }

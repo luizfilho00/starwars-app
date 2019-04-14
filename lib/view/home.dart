@@ -9,57 +9,64 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  String _search;
-  Map _mapMovies;
+  String _search = '';
   final String _urlMovies = 'https://swapi.co/api/films/';
   final String _urlSearch = 'https://swapi.co/api/films/?search=';
 
   @override
   void initState() {
     super.initState();
-
-    if (_mapMovies == null) {
-      Logic.getData(_urlMovies).then((map) {
-        if (mounted) {
-          setState(() {
-            _mapMovies = map;
-          });
-        }
-      });
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_mapMovies == null) {
-      return _scaffoldLoading(context);
-    } else {
-      return _scaffoldLoaded(context);
-    }
+    return _scaffoldHome(context);
   }
 
-  _scaffoldLoading(context) {
+  /// Faz uma requisição http para obter um JSON contendo os filmes
+  /// Se o usuário está buscando um filme exibe loading
+  /// Se o usuário não está buscando exibe a lista de filmes
+  /// Se a busca do usuário retornou um resultado exibe o filme encontrado
+  Future<Map> _getMovies() async {
+    var url;
+    if (_search.isEmpty)
+      url = _urlMovies;
+    else
+      url = _urlSearch + _search;
+    return Logic.getData(url);
+  }
+
+  /// Cria um Scaffold com a barra de pesquisa e alterna entre as telas de carregamento e exibição
+  _scaffoldHome(context) {
     return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: Image.asset('lib/assets/logo.png'),
-          centerTitle: true,
-        ),
+      appBar: AppBar(
         backgroundColor: Colors.black,
-        body: _loadingView(context));
+        title: Image.asset('lib/assets/logo.png'),
+        centerTitle: true,
+      ),
+      backgroundColor: Colors.black,
+      body: FutureBuilder(
+          future: _getMovies(),
+          builder: (context, snap) {
+            switch (snap.connectionState) {
+              case ConnectionState.none:
+              case ConnectionState.waiting:
+                return _loadingView(context);
+              default:
+                if (snap.hasError || snap.data == null)
+                  return Expanded(
+                    child: Center(
+                      child: Text(
+                          'Servidor indisponível no momento, tente novamente mais tarde.'),
+                    ),
+                  );
+                return _loadedView(context, snap.data);
+            }
+          }),
+    );
   }
 
-  _scaffoldLoaded(context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.black,
-          title: Image.asset('lib/assets/logo.png'),
-          centerTitle: true,
-        ),
-        backgroundColor: Colors.black,
-        body: _loadedView(context));
-  }
-
+  /// Widget barra de pesquisa
   _searchBar() {
     return Padding(
       padding: EdgeInsets.all(10.0),
@@ -71,39 +78,42 @@ class _HomePageState extends State<HomePage> {
         style: TextStyle(color: Colors.yellowAccent, fontSize: 18.0),
         textAlign: TextAlign.center,
         onChanged: (text) {
-          setState(() {
-            _search = text;
-          });
-          Logic.getData(_urlSearch + _search).then((map) {
+          if (mounted)
             setState(() {
-              _mapMovies = map;
+              _search = text;
             });
-          });
         },
       ),
     );
   }
 
+  /// View contendo a barra de pesquisa e o widget de loading
   _loadingView(context) {
     return Column(
       children: <Widget>[
         _searchBar(),
-        Expanded(child: PageElements.loading()),
+        Expanded(child: PageElements.loading(txt: 'Buscando filmes...')),
       ],
     );
   }
 
-  _loadedView(context) {
+  /// View contendo a barra de pesquisa e os filmes retornados pela api
+  _loadedView(context, snap) {
     return Column(
       children: <Widget>[
         _searchBar(),
-        Expanded(child: _createMoviesTable(context)),
+        Expanded(child: _createMoviesTable(context, snap)),
       ],
     );
   }
 
-  _createMoviesTable(BuildContext context) {
+  /// Retorna um widget contendo o grid de filmes encontrados pela api
+  /// Ou um Text dizendo que não foram encontrados filmes no servidor
+  _createMoviesTable(context, _mapMovies) {
     var count = _mapMovies["count"];
+    if (count == 0)
+      return PageElements.notFoundWidget(
+          'Infelizmente não encontramos esse filme :(');
     return GridView.builder(
         padding: EdgeInsets.all(5.0),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
