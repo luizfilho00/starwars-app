@@ -1,16 +1,17 @@
-# star_wars
+# Star Wars API
 
-A new Flutter project.
+Projeto desenvolvido em Flutter para dispositivos móveis utilizando a linguagem Dart 2.
+<br />Consome a API SWAPI: (https://swapi.co)
 
-## Getting Started
 
-This project is a starting point for a Flutter application.
+**Funções implementadas**
 
-A few resources to get you started if this is your first Flutter project:
+ - [x] Listar filmes
+ - [x] Busca de filmes
+ - [x] Exibir detalhes sobre um filme
+ - [x] Exibir detalhes sobre personagens do filme
+ - [x] Exibir detalhes sobre naves do filme
+ - [x] Exibir detalhes sobre espécies do filme
+ - [x] Exibir detalhes sobre veículos do filme
+ - [x] Exibir detalhes sobre planetas do filme
 
-- [Lab: Write your first Flutter app](https://flutter.io/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.io/docs/cookbook)
-
-For help getting started with Flutter, view our 
-[online documentation](https://flutter.io/docs), which offers tutorials, 
-samples, guidance on mobile development, and a full API reference.
