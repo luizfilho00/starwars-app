@@ -1,6 +1,6 @@
 # Star Wars API
 
-Projeto desenvolvido em Flutter, para dispositivos móveis utilizando a linguagem Dart 2.
+Projeto desenvolvido em Flutter para dispositivos móveis utilizando a linguagem Dart 2.
 <br />Consome a API SWAPI: (https://swapi.co)
 
 
