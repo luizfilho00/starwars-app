@@ -90,6 +90,7 @@ class _MoviePageState extends State<MoviePage> {
     );
   }
 
+  ///Botão grande e esticado para page Personagens
   _characterButton() {
     return Row(
       children: <Widget>[
