@@ -1,4 +1,4 @@
-# Star Wars API
+# Star Wars APP
 
 [![flutter](https://img.shields.io/badge/flutter-v1.2.1-blue.svg)](https://flutter.dev/)
 [![dart](https://img.shields.io/badge/dart-v2.1.2-blue.svg)](https://www.dartlang.org/)
